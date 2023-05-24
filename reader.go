@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (c *ConsumerGroup) GetNewKafkaReader(groupTopics []string) *kafka.Reader {
+func (c *ConsumerGroup) NewKafkaReader(groupTopics []string) *kafka.Reader {
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:                c.cfgConn.Host,
 		GroupID:                c.GroupID,
