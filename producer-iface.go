@@ -6,7 +6,16 @@ import (
 )
 
 type IProducer interface {
+	ErrorComposition
 	Publish(ctx context.Context, data ...[]byte) error
-	PublishJson(ctx context.Context, data ...[]any) error
-	PublishProto(ctx context.Context, data ...proto.Message) error
+}
+
+type IProtoProducer[T proto.Message] interface {
+	ErrorComposition
+	Publish(ctx context.Context, data ...T) error
+}
+
+type IJsonProducer[T any] interface {
+	ErrorComposition
+	Publish(ctx context.Context, data ...T) error
 }

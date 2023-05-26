@@ -6,23 +6,6 @@ import (
 	"time"
 )
 
-func (c *ConsumerGroup) NewKafkaReader(groupTopics []string) *kafka.Reader {
-	return kafka.NewReader(kafka.ReaderConfig{
-		Brokers:                c.cfgConn.Host,
-		GroupID:                c.GroupID,
-		GroupTopics:            groupTopics,
-		MinBytes:               minBytesDefault,
-		MaxBytes:               maxBytesDefault,
-		QueueCapacity:          queueCapacityDefault,
-		HeartbeatInterval:      heartbeatIntervalDefault,
-		CommitInterval:         commitIntervalDefault,
-		PartitionWatchInterval: partitionWatchIntervalDefault,
-		MaxAttempts:            maxAttemptsDefault,
-		MaxWait:                maxWaitDefault,
-		Dialer:                 c.cfgConn.getDialer(),
-	})
-}
-
 func (c *Config) newReader(groupId string, topic ...string) *kafka.Reader {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:                c.Host,

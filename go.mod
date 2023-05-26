@@ -3,6 +3,7 @@ module kafka-client
 go 1.20
 
 require (
+	github.com/golang/protobuf v1.5.0
 	github.com/ihatiko/log v0.0.14
 	github.com/json-iterator/go v1.1.12
 	github.com/opentracing/opentracing-go v1.2.0

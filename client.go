@@ -13,20 +13,22 @@ const (
 	delay    = 1
 )
 
-func (c *Config) checkConnection(ctx context.Context, topicConfig *TopicConfig) error {
+type Queue struct {
+	Error error
+}
+
+func Health(hosts ...string) error {
 	var (
-		conn      *kafka.Conn
-		err       error
 		globalErr error
 	)
 	wg := sync.WaitGroup{}
-	for _, br := range c.Host {
+	for _, br := range hosts {
 		wg.Add(1)
 		go func(host string) {
 			defer wg.Done()
 			var curAttempts int
 			for {
-				conn, err = kafka.DialContext(ctx, "tcp", host)
+				_, err := kafka.DialContext(context.TODO(), "tcp", host)
 				if err == nil {
 					break
 				}
@@ -42,18 +44,5 @@ func (c *Config) checkConnection(ctx context.Context, topicConfig *TopicConfig) 
 		}(br)
 	}
 	wg.Wait()
-	if globalErr != nil {
-		return globalErr
-	}
-	if c.InitTopics {
-		err = conn.CreateTopics(kafka.TopicConfig{
-			Topic:             topicConfig.Name,
-			ReplicationFactor: topicConfig.ReplicationFactor,
-			NumPartitions:     topicConfig.Partitions,
-		})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return globalErr
 }

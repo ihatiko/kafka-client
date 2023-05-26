@@ -1,16 +1,12 @@
 package kafka_client
 
 import (
-	"github.com/segmentio/kafka-go"
 	"google.golang.org/protobuf/proto"
 )
 
-type ConsumerGroup struct {
-	Brokers []string
-	GroupID string
-	log     kafka.Logger
-	cfgConn *Config
-	DLQ     bool
+func (c *Config) NewConsumer(cGroup *ConsumerGroup) {
+	//c.checkConnection(context.Background())
+	//c.newReader(cGroup.GroupID, cGroup.Topics...)
 }
 
 func ConsumeTopic(consumer IConsumer) {

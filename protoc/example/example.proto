@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package file;
+option go_package = ".;example";
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MessageOptions {
+  optional string Topic = 51234;
+}
+
+message ExampleMessageRequest {
+  option (Topic) = "sandbox";
+  string name1 = 1;
+  string name2 = 2;
+  string name3 = 3;
+  string name4 = 4;
+  string name5 = 5;
+}

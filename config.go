@@ -11,7 +11,10 @@ type TopicConfig struct {
 	Partitions        int
 }
 
-type ConsumerConfig struct {
+type ConsumerGroup struct {
+	GroupID string
+	Topics  []string
+	DLQ     bool
 }
 
 type Config struct {
