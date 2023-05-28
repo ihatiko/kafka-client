@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-func (c *Config) newReader(groupId string, topic ...string) *kafka.Reader {
+func (c *Config) newReader(group *ConsumerGroup) *kafka.Reader {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:                c.Host,
-		GroupID:                groupId,
-		GroupTopics:            topic,
+		GroupID:                group.GroupID,
+		GroupTopics:            group.Topics,
 		MinBytes:               minBytesDefault,
 		MaxBytes:               maxBytesDefault,
 		QueueCapacity:          queueCapacityDefault,

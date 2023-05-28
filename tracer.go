@@ -1,6 +1,7 @@
 package kafka_client
 
 import (
+	"context"
 	"github.com/opentracing/opentracing-go"
 	"github.com/segmentio/kafka-go"
 )
@@ -37,4 +38,8 @@ func TextMapCarrierToKafkaMessageHeaders(textMap opentracing.TextMapCarrier) []k
 	}
 
 	return headers
+}
+
+func ExtractJaegerContext(message kafka.Message) context.Context {
+	return nil
 }

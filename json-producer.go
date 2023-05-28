@@ -6,16 +6,16 @@ import (
 )
 
 type JsonProducer[T any] struct {
-	BaseProducer
+	BaseKafka
 }
 
-func (t JsonProducer[T]) Publish(ctx context.Context, data ...T) error {
+func (t *JsonProducer[T]) Publish(ctx context.Context, data ...T) error {
 	for _, d := range data {
 		m, err := jsoniter.Marshal(d)
 		if err != nil {
 			return err
 		}
-		err = t.publish(ctx, m)
+		err = t.publish(ctx, t.TopicConfig.Name, m)
 		if err != nil {
 			return err
 		}

@@ -5,12 +5,12 @@ import (
 )
 
 type Producer struct {
-	BaseProducer
+	BaseKafka
 }
 
 func (t *Producer) Publish(ctx context.Context, data ...[]byte) error {
 	for _, d := range data {
-		err := t.publish(ctx, d)
+		err := t.publish(ctx, t.TopicConfig.Name, d)
 		if err != nil {
 			return err
 		}

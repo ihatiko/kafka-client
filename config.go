@@ -14,11 +14,11 @@ type TopicConfig struct {
 type ConsumerGroup struct {
 	GroupID string
 	Topics  []string
-	DLQ     bool
+	DLQ     *Backoff
 }
 
 type Config struct {
-	InitTopics             bool
+	AllowAutoTopicCreation bool
 	Host                   []string
 	MinBytes               int
 	MaxBytes               int

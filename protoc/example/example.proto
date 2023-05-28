@@ -4,6 +4,8 @@ package file;
 option go_package = ".;example";
 import "google/protobuf/descriptor.proto";
 
+import "google/protobuf/struct.proto";
+
 extend google.protobuf.MessageOptions {
   optional string Topic = 51234;
 }

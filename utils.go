@@ -23,3 +23,12 @@ func (c *Config) NewTlsConfig() *tls.Config {
 		MinVersion: tls.VersionTLS12,
 	}
 }
+
+func OptionsProcessing(data *BaseKafka, opts ...Options) {
+	for _, opt := range opts {
+		if data.HasError() {
+			continue
+		}
+		opt(data)
+	}
+}

@@ -6,16 +6,16 @@ import (
 )
 
 type ProtoProducer[T proto.Message] struct {
-	BaseProducer
+	BaseKafka
 }
 
-func (t ProtoProducer[T]) Publish(ctx context.Context, data ...T) error {
+func (t *ProtoProducer[T]) Publish(ctx context.Context, data ...T) error {
 	for _, d := range data {
 		m, err := proto.Marshal(d)
 		if err != nil {
 			return err
 		}
-		err = t.publish(ctx, m)
+		err = t.publish(ctx, t.TopicConfig.Name, m)
 		if err != nil {
 			return err
 		}

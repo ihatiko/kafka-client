@@ -7,14 +7,15 @@ import (
 
 func (c *Config) NewWriter() *kafka.Writer {
 	w := &kafka.Writer{
-		Addr:         kafka.TCP(c.Host...),
-		Balancer:     &kafka.LeastBytes{},
-		RequiredAcks: WriterRequiredAcksDefault,
-		MaxAttempts:  WriterMaxAttemptsDefault,
-		ReadTimeout:  WriterReadTimeoutDefault,
-		WriteTimeout: WriterWriteTimeoutDefault,
-		Compression:  CompressionDefault,
-		Async:        AsyncDefault,
+		Addr:                   kafka.TCP(c.Host...),
+		Balancer:               &kafka.LeastBytes{},
+		RequiredAcks:           WriterRequiredAcksDefault,
+		MaxAttempts:            WriterMaxAttemptsDefault,
+		ReadTimeout:            WriterReadTimeoutDefault,
+		WriteTimeout:           WriterWriteTimeoutDefault,
+		Compression:            CompressionDefault,
+		Async:                  AsyncDefault,
+		AllowAutoTopicCreation: c.AllowAutoTopicCreation,
 	}
 	if c.UseSSL {
 		w.Transport = &kafka.Transport{
