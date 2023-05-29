@@ -17,16 +17,23 @@ func WithConfig(cfg *Config) Options {
 func WithConsumerGroup(cfg *ConsumerGroup) Options {
 	return func(t *BaseKafka) {
 		t.ConsumerConfig = cfg
-		t.Reader = t.KafkaConfig.newReader(t.ConsumerConfig)
+		t.Readers = make(map[string]*kafka.Reader)
+		for _, tp := range cfg.Topics {
+
+			t.Readers[tp] = t.KafkaConfig.newReader(t.ConsumerConfig)
+		}
+		t.Writer = t.KafkaConfig.NewWriter()
 	}
 }
 
 func WithDLQConsumerGroup(cfg *ConsumerGroup) Options {
 	return func(t *BaseKafka) {
+		t.ConsumerConfig = cfg
+		t.Writer = t.KafkaConfig.NewWriter()
 		t.Readers = make(map[string]*kafka.Reader)
 		for _, topic := range cfg.Topics {
 			for i := 1; i < cfg.DLQ.Attempts+1; i++ {
-				key := fmt.Sprintf("%s.attempt.%d", topic, i)
+				key := fmt.Sprintf("%s.attempts.%d", topic, i)
 				t.Readers[key] = t.KafkaConfig.newReader(&ConsumerGroup{
 					Topics:  []string{key},
 					GroupID: cfg.GroupID,

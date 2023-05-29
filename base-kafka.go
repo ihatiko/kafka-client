@@ -16,7 +16,6 @@ type BaseKafka struct {
 	Readers        map[string]*kafka.Reader
 	KafkaConfig    *Config
 	Writer         *kafka.Writer
-	Reader         *kafka.Reader
 }
 
 func (t *BaseKafka) Error() error {

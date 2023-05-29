@@ -92,23 +92,28 @@ func Test_kafka_consumers(t *testing.T) {
 
 	cgCfg := &ConsumerGroup{
 		Topics:  []string{"sandbox"},
-		GroupID: "test",
+		GroupID: "test2s",
 		DLQ: &Backoff{
-			Factor:      25,
-			Attempts:    9,
-			Max:         10,
-			MaxAttempts: 10,
+			Factor:   2,
+			Attempts: 10,
+			MaxDelay: 10,
 		},
 	}
 
 	assert.NilError(t, writer.Error())
+	//err := writer.Publish(context.TODO(), []byte(`{"name": "tests"}`))
+	//assert.NilError(t, err)
 
-	//go func() {
-	//	for range time.NewTicker(time.Second).C {
-	//		err := writer.Publish(context.TODO(), []byte(`{"name": "tests"}`))
-	//		assert.NilError(t, err)
-	//	}
-	//}()
+	//consumer2 := WithConsumer(
+	//	WithHealth(cfg.Host),
+	//	WithConfig(cfg),
+	//	WithConsumerGroup(cgCfg),
+	//)
+	//
+	//consumer2.Consume(func(request *Request[Data]) error {
+	//	fmt.Println(string(request.Data))
+	//	return errors.New("hello world")
+	//})
 
 	consumer := WithConsumer(
 		WithHealth(cfg.Host),
