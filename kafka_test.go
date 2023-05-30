@@ -76,6 +76,7 @@ func Test_kafka_consumers(t *testing.T) {
 	cfg := &Config{
 		AllowAutoTopicCreation: true,
 		Host:                   []string{"localhost:9092"},
+		MaxWait:                15,
 	}
 
 	tpCfg := &TopicConfig{
@@ -84,7 +85,7 @@ func Test_kafka_consumers(t *testing.T) {
 		ReplicationFactor: 1,
 	}
 
-	writer := WithProducer(
+	writer := WithJsonProducer[TestData](
 		WithHealth(cfg.Host),
 		WithConfig(cfg),
 		WithTopic(tpCfg),
@@ -92,39 +93,39 @@ func Test_kafka_consumers(t *testing.T) {
 
 	cgCfg := &ConsumerGroup{
 		Topics:  []string{"sandbox"},
-		GroupID: "test2s",
+		GroupID: "test2s15",
 		DLQ: &Backoff{
 			Factor:   2,
-			Attempts: 10,
+			Attempts: 5,
 			MaxDelay: 10,
 		},
 	}
 
 	assert.NilError(t, writer.Error())
-	//err := writer.Publish(context.TODO(), []byte(`{"name": "tests"}`))
-	//assert.NilError(t, err)
+	err := writer.Publish(context.TODO(), TestData{Name: "Hello"})
+	assert.NilError(t, err)
 
-	//consumer2 := WithConsumer(
-	//	WithHealth(cfg.Host),
-	//	WithConfig(cfg),
-	//	WithConsumerGroup(cgCfg),
-	//)
-	//
-	//consumer2.Consume(func(request *Request[Data]) error {
-	//	fmt.Println(string(request.Data))
-	//	return errors.New("hello world")
-	//})
+	consumer2 := WithJsonConsumer[TestData](
+		WithHealth(cfg.Host),
+		WithConfig(cfg),
+		WithConsumerGroup(cgCfg),
+	)
 
-	consumer := WithConsumer(
+	consumer2.Consume(func(request *Request[TestData]) error {
+		fmt.Println(request.Data.Id)
+		return errors.New("hello world")
+	})
+
+	consumer := WithJsonConsumer[TestData](
 		WithHealth(cfg.Host),
 		WithConfig(cfg),
 		WithDLQConsumerGroup(cgCfg),
 	)
 
-	consumer.Consume(func(request *Request[Data]) error {
-		fmt.Println(string(request.Data))
+	consumer.Consume(func(request *Request[TestData]) error {
+		fmt.Println(request.Data.Id)
 		return errors.New("hello world")
 	})
 
-	time.Sleep(time.Second * 100)
+	time.Sleep(time.Minute * 5)
 }

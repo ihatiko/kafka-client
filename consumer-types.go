@@ -9,5 +9,4 @@ type Data []byte
 type Request[T any] struct {
 	Context context.Context
 	Data    T
-	Meta    string
 }

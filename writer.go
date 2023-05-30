@@ -10,7 +10,6 @@ func (c *Config) NewWriter() *kafka.Writer {
 		Addr:                   kafka.TCP(c.Host...),
 		Balancer:               &kafka.LeastBytes{},
 		RequiredAcks:           WriterRequiredAcksDefault,
-		MaxAttempts:            WriterMaxAttemptsDefault,
 		ReadTimeout:            WriterReadTimeoutDefault,
 		WriteTimeout:           WriterWriteTimeoutDefault,
 		Compression:            CompressionDefault,

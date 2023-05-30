@@ -1,4 +1,4 @@
-module kafka-client
+module github.com/ihatiko/kafka-client
 
 go 1.20
 
@@ -14,6 +14,7 @@ require (
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/avast/retry-go v3.0.0+incompatible // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect

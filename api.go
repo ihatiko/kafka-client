@@ -33,7 +33,7 @@ func WithDLQConsumerGroup(cfg *ConsumerGroup) Options {
 		t.Readers = make(map[string]*kafka.Reader)
 		for _, topic := range cfg.Topics {
 			for i := 1; i < cfg.DLQ.Attempts+1; i++ {
-				key := fmt.Sprintf("%s.attempts.%d", topic, i)
+				key := fmt.Sprintf("%s.%s.%d", topic, attemptKey, i)
 				t.Readers[key] = t.KafkaConfig.newReader(&ConsumerGroup{
 					Topics:  []string{key},
 					GroupID: cfg.GroupID,

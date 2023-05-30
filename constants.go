@@ -20,7 +20,6 @@ const (
 	WriterReadTimeoutDefault  = 10 * time.Second
 	WriterWriteTimeoutDefault = 10 * time.Second
 	WriterRequiredAcksDefault = -1
-	WriterMaxAttemptsDefault  = 3
 	CompressionDefault        = compress.Gzip
 	AsyncDefault              = false
 )

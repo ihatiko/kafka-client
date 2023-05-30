@@ -41,5 +41,5 @@ func TextMapCarrierToKafkaMessageHeaders(textMap opentracing.TextMapCarrier) []k
 }
 
 func ExtractJaegerContext(message kafka.Message) context.Context {
-	return nil
+	return context.TODO()
 }
