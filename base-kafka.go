@@ -19,6 +19,7 @@ type BaseKafka struct {
 	Readers        map[string]*kafka.Reader
 	KafkaConfig    *Config
 	Writer         *kafka.Writer
+	Context        context.Context
 }
 
 func (t *BaseKafka) Error() error {
@@ -53,7 +54,9 @@ func (t *BaseKafka) publish(ctx context.Context, topic string, data []byte, head
 	return err
 }
 
-func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler func(context.Context, []byte) error) {
+type MessageHandler func(context.Context, []kafka.Header, []byte, string, int, int64) error
+
+func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler MessageHandler) {
 	//TODO shutdown
 	fmt.Println(fmt.Sprintf("start consume %v", reader.Config().GroupTopics))
 	for {
@@ -65,7 +68,7 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler f
 			break
 		}
 		extractedContext := ExtractJaegerContext(m)
-		err = handler(extractedContext, m.Value)
+		err = handler(extractedContext, m.Headers, m.Value, m.Topic, m.Partition, m.Offset)
 		if h, ok := findHeader(waitForKey, m.Headers); ok {
 			potentialTime := time.Time{}
 			err := potentialTime.GobDecode(h.Value)
@@ -124,7 +127,7 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler f
 				log.Fatal("failed to commit dlq message:", err)
 			}
 		}
-		if err := reader.CommitMessages(ctx, m); err != nil {
+		if err := reader.CommitMessages(extractedContext, m); err != nil {
 			log.Fatal("failed to commit messages:", err)
 		}
 	}

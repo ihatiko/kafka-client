@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ihatiko/kafka-client/protoc/example"
 	"gotest.tools/v3/assert"
-	"kafka-client/protoc/example"
+
 	"testing"
 	"time"
 )
@@ -96,7 +97,7 @@ func Test_kafka_consumers(t *testing.T) {
 		GroupID: "test2s15",
 		DLQ: &Backoff{
 			Factor:   2,
-			Attempts: 5,
+			Attempts: 10,
 			MaxDelay: 10,
 		},
 	}
