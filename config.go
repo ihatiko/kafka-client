@@ -15,28 +15,28 @@ type ConsumerGroup struct {
 	GroupID string
 	Topics  []string
 	DLQ     *Backoff
+	Debug   bool
 }
 
 type Config struct {
-	AllowAutoTopicCreation bool
 	Host                   []string
-	MinBytes               int
-	MaxBytes               int
-	QueueCapacity          int
-	HeartbeatInterval      time.Duration
-	CommitInterval         int
-	PartitionWatchInterval time.Duration
-	MaxAttempts            int
+	WriteTimeOut           time.Duration
+	ReadTimeOut            time.Duration
+	AsyncDefault           bool
 	DialTimeout            time.Duration
-	MaxWait                time.Duration
-	WriterReadTimeout      time.Duration
-	WriterWriteTimeout     time.Duration
-	WriterRequiredAcks     int
-	WriterMaxAttempts      int
+	MaxAttempts            int
+	PartitionWatchInterval time.Duration
+	CommitIntervalDefault  int
+	HeartbeatInterval      time.Duration
+	QueueCapacity          int
+	MinBytes               float64 // 10KB
+	MaxBytes               float64 // 10MB
 	Compression            kafka.Compression
 	Async                  bool
 	UseSSL                 bool
 	SslCaPem               string
 	Username               string
 	Password               string
+	AllowAutoTopicCreation bool
+	RequiredAcks           kafka.RequiredAcks
 }

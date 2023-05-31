@@ -19,7 +19,6 @@ func WithConsumerGroup(cfg *ConsumerGroup) Options {
 		t.ConsumerConfig = cfg
 		t.Readers = make(map[string]*kafka.Reader)
 		for _, tp := range cfg.Topics {
-
 			t.Readers[tp] = t.KafkaConfig.newReader(t.ConsumerConfig)
 		}
 		t.Writer = t.KafkaConfig.NewWriter()

@@ -7,19 +7,21 @@ import (
 )
 
 const (
-	minBytesDefault               = 10e3 // 10KB
-	maxBytesDefault               = 10e6 // 10MB
-	queueCapacityDefault          = 100
-	heartbeatIntervalDefault      = 3 * time.Second
-	commitIntervalDefault         = 0
-	partitionWatchIntervalDefault = 5 * time.Second
-	maxAttemptsDefault            = 3
-	dialTimeoutDefault            = 3 * time.Minute
-	maxWaitDefault                = 1 * time.Second
+	WriterRequiredAcks = -1
+)
 
-	WriterReadTimeoutDefault  = 10 * time.Second
-	WriterWriteTimeoutDefault = 10 * time.Second
-	WriterRequiredAcksDefault = -1
-	CompressionDefault        = compress.Gzip
-	AsyncDefault              = false
+const (
+	WriteTimeOut           = 15 * time.Second
+	ReadTimeOut            = 15 * time.Second
+	Compression            = compress.Gzip
+	AsyncDefault           = false
+	DialTimeout            = 3 * time.Minute
+	MaxAttempts            = 10
+	PartitionWatchInterval = 5 * time.Second
+	CommitIntervalDefault  = 0
+	HeartbeatInterval      = 3 * time.Second
+	QueueCapacity          = 100
+	MinBytes               = 10e3 // 10KB
+	MaxBytes               = 10e6 // 10MB
+	AllowAutoTopicCreation = true
 )
