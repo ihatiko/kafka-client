@@ -11,6 +11,7 @@ const (
 )
 
 const (
+	MaxWait                = 3 * time.Second
 	WriteTimeOut           = 15 * time.Second
 	ReadTimeOut            = 15 * time.Second
 	Compression            = compress.Gzip
@@ -18,7 +19,7 @@ const (
 	DialTimeout            = 3 * time.Minute
 	MaxAttempts            = 10
 	PartitionWatchInterval = 5 * time.Second
-	CommitIntervalDefault  = 0
+	CommitInterval         = 0
 	HeartbeatInterval      = 3 * time.Second
 	QueueCapacity          = 100
 	MinBytes               = 10e3 // 10KB

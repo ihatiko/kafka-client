@@ -68,6 +68,10 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler M
 			break
 		}
 		extractedContext := ExtractJaegerContext(m)
+		extractedMainTopic, ok := findHeader(mainTopicKey, m.Headers)
+		if ok {
+			headers = append(headers, extractedMainTopic)
+		}
 		err = handler(extractedContext, m.Headers, m.Value, m.Topic, m.Partition, m.Offset)
 		if h, ok := findHeader(waitForKey, m.Headers); ok {
 			potentialTime := time.Time{}
@@ -80,13 +84,17 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler M
 				time.Sleep(dif)
 			}
 		}
-		if err != nil && t.ConsumerConfig.DLQ != nil && !strings.HasSuffix(m.Topic, DLQKey) {
+		if err != nil && t.ConsumerConfig.DLQ != nil && !strings.HasSuffix(m.Topic, dLQKey) {
 			deliveryTopic := m.Topic
 			attemptHeader, ok := findHeader(attemptKey, m.Headers)
 			if !ok {
-				attemptHeader := kafka.Header{
+				attemptHeader = kafka.Header{
 					Key:   attemptKey,
 					Value: []byte("1"),
+				}
+				topicHeader := kafka.Header{
+					Key:   mainTopicKey,
+					Value: []byte(m.Topic),
 				}
 				nextDur := t.ConsumerConfig.DLQ.GetDuration(1)
 				nextTime := time.Now().Add(nextDur)
@@ -96,13 +104,15 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler M
 					Value: valueHeaderDate,
 				}
 				deliveryTopic = fmt.Sprintf("%s.%s.%d", m.Topic, attemptKey, 1)
-				headers = append(headers, waitForHeader, attemptHeader)
+				headers = append(headers, waitForHeader, attemptHeader, topicHeader)
 			} else {
+				//TODO проверка на отсутсвие заголовка
+				// TODO распилить на методы
 				currentAttempt, _ := strconv.Atoi(string(attemptHeader.Value))
 				currentAttempt += 1
 				if currentAttempt > t.ConsumerConfig.DLQ.Attempts {
-					currentMainTopic := strings.Split(m.Topic, replaceAttemptKey)[0]
-					deliveryTopic = fmt.Sprintf("%s.%s", currentMainTopic, DLQKey)
+					currentMainTopic := string(extractedMainTopic.Value)
+					deliveryTopic = fmt.Sprintf("%s.%s", currentMainTopic, dLQKey)
 				} else {
 					nextDur := t.ConsumerConfig.DLQ.GetDuration(currentAttempt)
 					nextTime := time.Now().Add(nextDur)
@@ -112,7 +122,7 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler M
 						Value: valueHeaderDate,
 					}
 					attemptHeader.Value = []byte(strconv.Itoa(currentAttempt))
-					currentMainTopic := strings.Split(m.Topic, replaceAttemptKey)[0]
+					currentMainTopic := string(extractedMainTopic.Value)
 					deliveryTopic = fmt.Sprintf("%s.%s.%d", currentMainTopic, attemptKey, currentAttempt)
 					headers = append(headers, waitForHeader, attemptHeader)
 				}

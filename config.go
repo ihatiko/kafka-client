@@ -20,6 +20,7 @@ type ConsumerGroup struct {
 
 type Config struct {
 	Host                   []string
+	MaxWait                time.Duration
 	WriteTimeOut           time.Duration
 	ReadTimeOut            time.Duration
 	AsyncDefault           bool

@@ -2,8 +2,16 @@ package kafka_client
 
 import (
 	"context"
+	"fmt"
 	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/log"
 	"github.com/segmentio/kafka-go"
+)
+
+const (
+	topicKey     = "topic"
+	offsetKey    = "offset"
+	partitionKey = "partition"
 )
 
 func GetKafkaTracingHeadersFromSpanCtx(spanCtx opentracing.SpanContext) []kafka.Header {
@@ -41,5 +49,23 @@ func TextMapCarrierToKafkaMessageHeaders(textMap opentracing.TextMapCarrier) []k
 }
 
 func ExtractJaegerContext(message kafka.Message) context.Context {
-	return context.TODO()
+	m := make(opentracing.TextMapCarrier)
+	for _, h := range message.Headers {
+		m.Set(h.Key, string(h.Value))
+	}
+	extractedSpan, err := opentracing.GlobalTracer().Extract(opentracing.TextMap, m)
+	if err != nil {
+		return context.TODO()
+	}
+	span := opentracing.StartSpan(
+		fmt.Sprintf("Consume.%s.%d", message.Topic, message.Partition),
+		opentracing.FollowsFrom(extractedSpan),
+	)
+	span.SetTag(topicKey, message.Topic)
+	span.LogFields(
+		log.Int64(offsetKey, message.Offset),
+		log.Int(partitionKey, message.Partition),
+	)
+
+	return opentracing.ContextWithSpan(context.TODO(), span)
 }

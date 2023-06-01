@@ -1,5 +1,4 @@
 kafka:
-  jaeger: false
   brokers: ["localhost:9092"]
   groupID: b2b
   initTopics: false

@@ -3,7 +3,6 @@ package kafka_client
 import (
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl/plain"
-	"time"
 )
 
 func (c *Config) newReader(group *ConsumerGroup) *kafka.Reader {
@@ -11,15 +10,16 @@ func (c *Config) newReader(group *ConsumerGroup) *kafka.Reader {
 		Brokers:                c.Host,
 		GroupID:                group.GroupID,
 		GroupTopics:            group.Topics,
-		MinBytes:               minBytesDefault,
-		MaxBytes:               maxBytesDefault,
-		QueueCapacity:          queueCapacityDefault,
-		HeartbeatInterval:      heartbeatIntervalDefault,
-		CommitInterval:         commitIntervalDefault,
-		PartitionWatchInterval: partitionWatchIntervalDefault,
-		MaxAttempts:            maxAttemptsDefault,
-		MaxWait:                time.Second,
+		MinBytes:               MinBytes,
+		MaxBytes:               MaxBytes,
+		QueueCapacity:          QueueCapacity,
+		HeartbeatInterval:      HeartbeatInterval,
+		CommitInterval:         CommitInterval,
+		PartitionWatchInterval: PartitionWatchInterval,
+		MaxAttempts:            MaxAttempts,
+		MaxWait:                MaxWait,
 		Dialer:                 c.getDialer(),
+		//TODO добавить оставшиеся параметры для переопределения
 	})
 
 	return r
@@ -32,13 +32,13 @@ func (c *Config) getDialer() *kafka.Dialer {
 			Password: c.Password,
 		}
 		return &kafka.Dialer{
-			Timeout:       dialTimeoutDefault,
+			Timeout:       DialTimeout,
 			DualStack:     true,
 			TLS:           c.NewTlsConfig(),
 			SASLMechanism: mechanism,
 		}
 	}
 	return &kafka.Dialer{
-		Timeout: dialTimeoutDefault,
+		Timeout: DialTimeout,
 	}
 }
