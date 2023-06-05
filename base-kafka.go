@@ -72,7 +72,6 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler M
 		if ok {
 			headers = append(headers, extractedMainTopic)
 		}
-		err = handler(extractedContext, m.Headers, m.Value, m.Topic, m.Partition, m.Offset)
 		if h, ok := findHeader(waitForKey, m.Headers); ok {
 			potentialTime := time.Time{}
 			err := potentialTime.GobDecode(h.Value)
@@ -84,6 +83,8 @@ func (t *BaseKafka) consume(ctx context.Context, reader *kafka.Reader, handler M
 				time.Sleep(dif)
 			}
 		}
+
+		err = handler(extractedContext, m.Headers, m.Value, m.Topic, m.Partition, m.Offset)
 		if err != nil && t.ConsumerConfig.DLQ != nil && !strings.HasSuffix(m.Topic, dLQKey) {
 			deliveryTopic := m.Topic
 			attemptHeader, ok := findHeader(attemptKey, m.Headers)
